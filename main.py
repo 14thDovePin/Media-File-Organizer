@@ -1,16 +1,19 @@
 """ June 30, 2025
 What is this script about?
 This script formats any Movie or Series file names into their proper
-titles that are readable by Plex's media file namescheming.
+titles that are readable by Plex's or Jellyfin's media file namescheming.
 
 How does it work?
 Below is the script's procedure. (may change as the script is developed)
 
-1. Locate the files for the media.
-2. Determine media type.
-3. Obtain the title from the movies metadata from OMDb or IMDb.
-4. Format title to Plex's media file namescheming.
-5. Rename all media files.
+1. Locate the media files.
+    - Extract parent directory name.
+    - Extract filename/s.
+2. Process title/s from either directory name or filename/s.
+3. Determine media type (movie or show).
+4. Obtain the proper parent directory name as well as media filename/s from OMDb or OMDb.
+5. Format title to Plex's media file namescheming.
+6. Rename all media files.
 
 External Libraries Used:
   colorama
@@ -42,6 +45,8 @@ TEST_MODE = False
 def main():
     # Prompt the user for the information of the media to be used.
     media_directory, directory_name, filenames = prompt_media_info()
+
+    return
 
     # Process media data.
     directory_data = process_directory_data(media_directory, directory_name)

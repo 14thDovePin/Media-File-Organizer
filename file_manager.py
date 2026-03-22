@@ -33,7 +33,8 @@ def prompt_media_info(clr: Colors=Colors(),
     filenames (list)
         The list containing filenames inside the media directory.
     """
-    clr.print_colored('PROCESSING MEDIA... ', Fore.LIGHTMAGENTA_EX)
+    clr.print_colored('Media File Organizer', Fore.LIGHTMAGENTA_EX)
+    clr.print_colored('====================', Fore.LIGHTMAGENTA_EX)
     print('[Type "', end='')
     clr.print_warning('exit', end='')
     print('" or "', end='')
