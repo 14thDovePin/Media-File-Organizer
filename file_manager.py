@@ -12,71 +12,21 @@ VE = video_extensions()
 VQ = video_qualities()
 
 
-def prompt_media_info(clr: Colors=Colors(),
-                      test_mode: bool=False
-                      ) -> tuple[str, str, list]:
-    """Prompts User for the media to be used and processed by the script.
+def prompt_root_directory() -> str:
+    """Prompt the root directory and return it as a string."""
+    while True:
+        media_directory = input("Enter Media Root Directory: ")
 
-    Parameters
-    ----------
-    clr: Colors
-        For coloring text in prompts.
-    test_mode: bool
-        Switch to control testing for the function.
+        if media_directory.lower() in ['exit', 'quit']:
+            exit()
 
-    Returns
-    -------
-    media_directory (str)
-        The directory of the media to be used.
-    directory_name (str)
-        The name of the directory.
-    filenames (list)
-        The list containing filenames inside the media directory.
-    """
-    clr.print_colored('Media File Organizer', Fore.LIGHTMAGENTA_EX)
-    clr.print_colored('====================', Fore.LIGHTMAGENTA_EX)
-    print('[Type "', end='')
-    clr.print_warning('exit', end='')
-    print('" or "', end='')
-    clr.print_warning('quit', end='')
-    print('" to end script...]')
+        if not media_directory:
+            continue
 
-    # PROMPT USER
-    if not test_mode:
-        # Prompt Files Directory
-        while True:
-            media_directory = clr.input("Enter Media Directory: ")
-
-            if media_directory.lower() in ['exit', 'quit']:
-                clr.reset()
-                exit()
-
-            if not os.path.exists(media_directory):
-                clr.print_error("Invalid Directory!")
-            else:
-                break
-
-        # Extract Directory Name
-        directory_name = media_directory.split('\\').pop()
-
-        # Extract Filenames
-        _, _, filenames = next(os.walk(media_directory))
-
-    if test_mode:
-        # Locate Samples
-        directory = __file__.split('\\')[:-1]
-        directory = '\\'.join(directory)
-        directory += '\\samples_ignore.json'
-
-        # Extract Samples
-        with open(directory, 'r') as f:
-            raw_string = ""
-            for i in f.readlines(): raw_string += i
-            filenames = json.loads(raw_string)
-
-        media_directory = os.getcwd()
-
-    return media_directory, directory_name, filenames
+        if not os.path.exists(media_directory):
+            print("--- Invalid Directory! ---")
+        else:
+            return media_directory
 
 
 def process_filename(filename: str, metadata: dict=None,

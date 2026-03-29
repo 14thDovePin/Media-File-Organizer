@@ -24,9 +24,10 @@ Developer Notes
 I overengineered this a little bit. But that's part
 of trying to implement new things I've learned!
 """
+
 import os
 
-from file_manager import prompt_media_info
+from file_manager import prompt_root_directory
 from data_processor import (
     parse_imdb_ids,
     process_directory_data,
@@ -39,12 +40,40 @@ from utils.colors import Colors
 from utils.templates import GenerateTemplate
 
 
-TEST_MODE = False
+DEBUG_MODE = False
+
+ROOT_DIR = str()
+DIR_NAME = str()
 
 
 def main():
-    # Prompt the user for the information of the media to be used.
-    media_directory, directory_name, filenames = prompt_media_info()
+    print('Media File Organizer')
+    print('====================')
+    print('[Type "exit" or "quit" to end script...]')
+
+    # Prompt the root directory of the media.
+    ROOT_DIR = prompt_root_directory()
+
+    # Extract Directory Name
+    DIR_NAME = ROOT_DIR.split('\\').pop()
+
+    '''Directory Scanning Plan
+
+    As of now the setup currently assumes that the directory is currently a movie or tv show.
+    In the near future updates the script needs to scan a directory full of either movies or shows.
+    For each scan: A data structure should represent a directory, and all the files within it.
+    For each of this data structure should be tested if its either a movie or show.
+    '''
+
+    # Extract Filenames
+    walk = os.walk(ROOT_DIR)
+    _, _, filenames = next(walk)
+    print(filenames)
+
+    # Integrate sample in test. Integarte in debug mode?
+
+
+    # media_directory, directory_name, filenames = prompt_root_directory()
 
     return
 
@@ -81,5 +110,5 @@ if __name__ == "__main__":
         os.system(cmd)
 
     # Run Script
-    while True:
-        main()
+    # while True:
+    main()
