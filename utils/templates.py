@@ -21,24 +21,22 @@ class GenerateTemplate():
 
 
     def metadata(self) -> dict:
-        """Generate a metadata dictionary.
+        """Create and return a media information dictionary.
 
         Returns
         -------
-        metadata : dict
-            Dictionary Keys:
-            - **title** : str
-            - **type** : str
-                Set to either "movie" or "series".
-            - **year** : str
-            - **season** : str
-            - **episode** : str
-            - **imdb_id** : str
+        dict
+            title : str
+            media_type : str
+            year : int
+            season : int
+            episode : int
+            imdb_id : str
         """
 
         return {
             "title" : "",
-            "type" : "",
+            "media_type" : "",
             "year" : "",
             "season" : "",
             "episode" : "",
@@ -64,3 +62,30 @@ class GenerateTemplate():
             "extension" : "",
             "path" : "",
         }
+
+    def media_info(self, is_show: False) -> dict:
+        """Create and return a dictionary to house related information of media.
+
+        Parameters
+        ----------
+        is_show : bool, default=False
+            If specified as true, season, and episode key-value
+            pairs are added to the dict before returning.
+
+        Returns
+        -------
+        dict
+        """
+        media_dict = {
+            "title" : "",
+            "media_type" : "Movie",
+            "year" : int(),
+            "imdb_id" : ""
+        }
+
+        if is_show:
+            media_dict["media_type"] = "Show"
+            media_dict["Season"] = int()
+            media_dict["Episode"] = int()
+
+        return media_dict

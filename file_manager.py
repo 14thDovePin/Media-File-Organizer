@@ -29,9 +29,10 @@ def prompt_root_directory() -> str:
             return media_directory
 
 
-def process_filename(filename: str, metadata: dict=None,
-                     file_info: dict=None) -> list:
-    """Generate title sequence and information with a given filename.
+def parse_name(filename: str, metadata: dict=None,
+                     file_info: dict=None) -> dict:
+    """ Return a dictionary of information regarding the given filename.
+    Generate title sequence and information with a given filename.
 
     Parameters
     ----------
