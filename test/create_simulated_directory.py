@@ -8,7 +8,7 @@ fullfill the testing needs of this project.
 import os
 
 
-DIRECTORY = os.path.join(os.getcwd(), 'test', 'simulated_media_files')
+DIRECTORY = os.path.join(os.getcwd(), 'test', 'simulated_media_files.ignore')
 
 
 def main():
