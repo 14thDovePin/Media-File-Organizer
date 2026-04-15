@@ -5,10 +5,10 @@ import re
 from colorama import Fore
 
 from utils.colors import Colors
-from utils.data_sets import video_extensions, video_qualities
+from utils.data_sets import file_extensions, video_qualities
 
 
-VE = video_extensions()
+FE = file_extensions()
 VQ = video_qualities()
 
 
@@ -108,7 +108,7 @@ def parse_filename(filename:str) -> dict:
     extension = None
     potential_extension = filename.split('.')[-1]
 
-    if potential_extension in VE:
+    if potential_extension in FE or potential_extension == 'srt':
         directory = False
         extension = potential_extension
 
@@ -150,7 +150,7 @@ def parse_filename(filename:str) -> dict:
         store_index = False
 
         # File Extension
-        if word in VE:
+        if word in FE:
             store_index = True
 
         # Year
@@ -187,7 +187,7 @@ def parse_filename(filename:str) -> dict:
 
 def check_video(filename: str) -> bool:
     """Check if filename is a video by its extension."""
-    for ext in VE:
+    for ext in FE:
         if ext in filename:
             return True
 
