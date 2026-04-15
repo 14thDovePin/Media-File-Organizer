@@ -29,8 +29,8 @@ def prompt_root_directory() -> str:
             return media_directory
 
 
-def parse_directory(directory_name) -> dict:
-    """Parse a given directory name for its media related information.
+def parse_filename(filename:str) -> dict:
+    """Parse a given filename or directory name for its media related information.
 
     Parameters
     ----------
@@ -61,55 +61,72 @@ def parse_directory(directory_name) -> dict:
     media_data = {
         "title": None,
         "year": None,
-        # "type": None,
-        # "imdb_id" : None,
-        # "season_number": None,
-        # "episode_number": None,
-        # "file_extension": None,
-        "directory_name" : directory_name
+        "type": None,
+        "imdb_id" : None,
+        "season_number": None,
+        "episode_number": None,
+        "file_extension": None,
+        "file_name": None,
+        "directory_name" : None
     }
 
     # Parse data into dictionary.
 
     # Extract Year
-    year = re.search(year_pattern, directory_name)
+    year = re.search(year_pattern, filename)
 
     if year:
         year = year.group(0)
-        media_data["year"] = year
+        media_data["year"] = int(year)
 
-    # # Extract Season Number
-    # season = re.search(season_pattern, directory_name, ignore_case)
+    # Extract Season Number
+    season = re.search(season_pattern, filename, ignore_case)
 
-    # if season:
-    #     if season.group(1):
-    #         media_data['season_number'] = season.group(1)
-    #     else:
-    #         media_data['season_number'] = season.group(2)
+    if season:
+        if season.group(1):
+            media_data['season_number'] = season.group(1)
+        else:
+            media_data['season_number'] = season.group(2)
 
-    # # Extract Episode Number
-    # episode = re.search(episode_pattern, directory_name, ignore_case)
+        if media_data['season_number'] != None:
+            media_data['season_number'] = int(media_data['season_number'])
 
-    # if episode:
-    #     if episode.group(1):
-    #         media_data['episode_number'] = episode.group(1)
-    #     else:
-    #         media_data['episode_number'] = episode.group(2)
+    # Extract Episode Number
+    episode = re.search(episode_pattern, filename, ignore_case)
 
-    # # Extract File Extension
-    # for extension in VE:
-    #     if extension in directory_name:
-    #         media_data['file_extension'] = extension
+    if episode:
+        if episode.group(1):
+            media_data['episode_number'] = episode.group(1)
+        else:
+            media_data['episode_number'] = episode.group(2)
 
-    # # Determine Title Type
-    # if media_data['season_number'] or media_data['episode_number']:
-    #     media_data['type'] = 'series'
+        if media_data['episode_number'] != None:
+            media_data['episode_number'] = int(media_data['episode_number'])
+
+    # Extract file extension if filename is a file.
+    directory = True
+    extension = None
+    potential_extension = filename.split('.')[-1]
+
+    if potential_extension in VE:
+        directory = False
+        extension = potential_extension
+
+    if not directory:
+        media_data['file_extension'] = extension
+        media_data['file_name'] = filename
+    else:
+        media_data['directory_name'] = filename
+
+    # Determine Title Type
+    if media_data['season_number'] or media_data['episode_number']:
+        media_data['type'] = 'series'
 
     # Special Case/s
 
     # Remove anything enclosed in () or [], But if it
     # contains the Year, then remove () or [].
-    enclosed_words = re.findall(enclosed_pattern, directory_name)
+    enclosed_words = re.findall(enclosed_pattern, filename)
 
     for matched_word in enclosed_words:
         year = re.search(year_pattern, matched_word)
@@ -118,14 +135,14 @@ def parse_directory(directory_name) -> dict:
             s_char = matched_word[0]  # Starting Character
             starting_char = s_char if s_char != '(' else ''
             year_final = starting_char + year.group(0)
-            directory_name = directory_name.replace(matched_word, year_final)
+            filename = filename.replace(matched_word, year_final)
         else:
-            directory_name = directory_name.replace(matched_word, '')
+            filename = filename.replace(matched_word, '')
 
     # Process Title
 
     # Sequence words.
-    word_sequence = re.findall(word_pattern, directory_name)
+    word_sequence = re.findall(word_pattern, filename)
 
     # Cut List
     indexes = []
@@ -195,15 +212,15 @@ if __name__ == "__main__":
     test_results = list()
 
     for i in files_and_directories:
-        test_results.append(parse_directory(i))
+        test_results.append(parse_filename(i))
 
     # for i in test_results: print(i)
     # print(len(test_results))
 
     dir_test_results = []
 
-    for i in directories:
-        dir_test_results.append(parse_directory(i))
+    for i in files_and_directories:
+        dir_test_results.append(parse_filename(i))
 
     # for i in dir_test_results: print(i)
     # print(len(dir_test_results))

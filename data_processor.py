@@ -4,7 +4,7 @@ import cutie
 from colorama import Fore
 from googlesearch import search
 
-from file_manager import parse_directory, check_video
+from file_manager import parse_filename, check_video
 from request_manager import request_metadata
 from utils.colors import Colors
 from utils.templates import GenerateTemplate as GT
@@ -34,7 +34,7 @@ def process_directory_data(media_directory: str,
     dir_metadata = gt.metadata()
     dir_info = gt.file_info()
 
-    title_sequence = parse_directory(directory_name, dir_metadata, dir_info)
+    title_sequence = parse_filename(directory_name, dir_metadata, dir_info)
     dir_info['path'] = media_directory
 
     # Store Directory Data
@@ -75,7 +75,7 @@ def process_filenames_data(media_directory: str,
         file_metadata = gt.metadata()
         file_info = gt.file_info()
 
-        title_sequence = parse_directory(file, file_metadata, file_info)
+        title_sequence = parse_filename(file, file_metadata, file_info)
         file_info['path'] = media_directory
 
         # Store & Append Information
