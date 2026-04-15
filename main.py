@@ -66,6 +66,7 @@ def main():
         print_debug('Files:')
         for i in filenames: print_debug('\t'+i)
 
+    # Parse media title.
 
 
 
