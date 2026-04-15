@@ -8,16 +8,18 @@ VIDE_EXTENSIONS = [
 SUBTITLE_EXTENSIONS = ['srt']
 
 IMAGE_EXTENSIONS = [
-    ".jpg", ".jpeg", ".png", ".gif", ".bmp", ".tiff", ".tif", ".webp",
-    ".svg", ".ico", ".heic", ".heif", ".raw", ".cr2", ".nef", ".arw",
-    ".psd", ".ai", ".eps"
+    "jpg", "jpeg", "png", "gif", "bmp", "tiff", "tif", "webp",
+    "svg", "ico", "heic", "heif", "raw", "cr2", "nef", "arw",
+    "psd", "ai", "eps"
 ]
+
+TEXT_EXTENSIONS = ['txt', 'text', 'md', 'nfo']
 
 
 def file_extensions() -> list:
     """Return a list of file extensions known to be encountered."""
     # Return a list of common video extensions.
-    return VIDE_EXTENSIONS + SUBTITLE_EXTENSIONS + IMAGE_EXTENSIONS
+    return VIDE_EXTENSIONS + SUBTITLE_EXTENSIONS + IMAGE_EXTENSIONS + TEXT_EXTENSIONS
 
 
 def video_qualities() -> list:

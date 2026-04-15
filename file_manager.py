@@ -108,7 +108,7 @@ def parse_filename(filename:str) -> dict:
     extension = None
     potential_extension = filename.split('.')[-1]
 
-    if potential_extension in FE or potential_extension == 'srt':
+    if potential_extension in FE:
         directory = False
         extension = potential_extension
 
