@@ -29,7 +29,10 @@ TODO List
 
 import os
 
-from file_manager import prompt_root_directory
+from file_manager import (
+    prompt_root_directory,
+    parse_filename
+)
 from data_processor import (
     parse_imdb_ids,
     process_directory_data,
@@ -66,7 +69,8 @@ def main():
         print_debug('Files:')
         for i in filenames: print_debug('\t'+i)
 
-    # Parse media title.
+    # Initially parse the media title.
+    media_data = parse_filename(DIR_NAME)
 
 
 

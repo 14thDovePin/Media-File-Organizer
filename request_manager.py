@@ -1,21 +1,83 @@
-import math
 import requests
 import os
 
-from colorama import Fore, Back, Style
 from dotenv import load_dotenv
 
 from utils.colors import Colors
 
 
+# Global Setup
 load_dotenv()
-c = Colors()
-# URL Definitions
 API_KEY = os.getenv('omdb_api')
 OMDB_BASE_URL = 'https://www.omdbapi.com/?apikey='
 
 
-# def request_metadata(title_sequence: list=[], year: str='', imdb_id: str=''):
+def search_omdb(
+        search_title : str,
+        year : int='',
+        type : str='',
+        page : int=1,
+        page_limit : int=4
+        ) -> dict:
+    """Return a dictionary of search results based from given input.
+
+    Parameters
+    ----------
+    search_title : str
+        The movie or show title to search for.
+    year : int
+        The year of the title.
+    type : str
+        The type of the media to search for. "movie", "series" or "episode".
+    page : int, default = 1
+        Page to retrieve results from omdb.
+    page_limit : int, default = 10
+        Limit of pages to combine search results with.
+
+    Returns
+    -------
+    dict
+        "Search" : [dict, dict, ...]
+        "totalResults" : str
+        "Response" : str
+            "True" or "False"
+    """
+    # Construct url.
+    url = OMDB_BASE_URL + API_KEY \
+        + "&s=" + search_title \
+        + "&y=" + str(year) \
+        + "&type=" + type \
+        + "&page=" + str(page)
+
+    # Process first request.
+    response = requests.get(url).json()
+
+    # Process consecutive request to merge results if `totalResults` > 10.
+    totalResults = int(response['totalResults'])
+
+    if totalResults > 10 and page == 1:
+        count = totalResults / 10
+
+        if totalResults % 10 != 0:
+            count += 1
+
+        count = int(count)
+
+        if totalResults > page_limit * 10:
+            print(f"PARSE EXCEEDED {page_limit} PAGES OF RESULTS! CUTTING EXCESS...")
+            count = page_limit
+
+        for i in range(count):
+            if i == 0: continue
+            consecutive_response = search_omdb(search_title, year, type, i+1)
+
+            for result in consecutive_response["Search"]:
+                if result not in response["Search"]:
+                    response["Search"].append(result)
+
+    return response
+
+
 def request_metadata(
         title_sequence: list = [],
         year: str = '',
@@ -120,3 +182,9 @@ def check_media_type(imdb_id) -> bool:
     metadata = request_metadata(imdb_id=imdb_id)
 
     return metadata["Type"]
+
+
+if __name__ == "__main__":
+    results = search_omdb("after")["Search"]
+    for i in results: print(f"[{i['imdbID']}] | {i['Title'], }")
+    print("total results: ", len(results))
