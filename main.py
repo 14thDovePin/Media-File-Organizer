@@ -18,6 +18,7 @@ External Libraries Used:
   colorama
   dotenv
   googlesearch-python
+  pick
 
 Developer Notes (Aprile 08, 2026)
 I really did over engineered this. With a fresh new mindset as well
@@ -95,6 +96,12 @@ def main():
 
             prompts.update_title(media_data)
             prompts.update_year(media_data)
+        else:
+            break
+
+    # If multiple search results, prompt user to select.
+    if int(search_results['totalResults']) > 1:
+        pass
 
 
 if __name__ == "__main__":
