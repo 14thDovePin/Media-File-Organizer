@@ -27,3 +27,7 @@ def video_qualities() -> list:
     return [
         '240p', '360p', '480p', '720p', '1080p', '1440p', '2160p', '4320p'
     ]
+
+
+def exit_list() -> list:
+    return ['exit', 'quit']

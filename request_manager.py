@@ -18,7 +18,7 @@ def search_omdb(
         type : str='',
         page : int=1,
         page_limit : int=4
-        ) -> dict:
+        ) -> dict | None:
     """Return a dictionary of search results based from given input.
 
     Parameters
@@ -51,6 +51,9 @@ def search_omdb(
 
     # Process first request.
     response = requests.get(url).json()
+
+    if 'totalResults' not in response.keys():
+        return None
 
     # Process consecutive request to merge results if `totalResults` > 10.
     totalResults = int(response['totalResults'])

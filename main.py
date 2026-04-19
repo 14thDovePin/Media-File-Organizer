@@ -29,10 +29,8 @@ TODO List
 
 import os
 
-from file_manager import (
-    prompt_root_directory,
-    parse_filename
-)
+import prompts
+
 from data_processor import (
     parse_imdb_ids,
     process_directory_data,
@@ -40,7 +38,11 @@ from data_processor import (
     resolve_ids,
     unify_title_sequences
 )
-from request_manager import check_media_type
+from file_manager import (
+    prompt_root_directory,
+    parse_filename
+)
+from request_manager import search_omdb
 from utils.colors import Colors
 from utils.debug import print_debug
 from utils.templates import GenerateTemplate
@@ -50,6 +52,8 @@ DEBUG = True
 
 ROOT_DIR = str()
 DIR_NAME = str()
+
+EXIT_LIST = ['exit', 'quit']
 
 
 def main():
@@ -72,31 +76,25 @@ def main():
     # Initially parse the media title.
     media_data = parse_filename(DIR_NAME)
 
+    # Process Media IMDb Title
+    while True:
 
+        # Lookup title through OMDb search.
+        search_results = search_omdb(
+            media_data["title"],
+            media_data["year"]
+        )
 
+        if search_results is None:
+            # Update media details.
+            print('\nError! Movie Not Found...')
+            print('Current Title Details:')
+            print(f'\tTitle > {media_data["title"]}')
+            print(f'\tYear -> {media_data["year"]}')
+            print("Enter 'exit' or 'quit' to end script. Enter blank if either title or year doesn't need changes.")
 
-    # # Process media data.
-    # directory_data = process_directory_data(media_directory, directory_name)
-    # files_data = process_filenames_data(media_directory, filenames)
-
-    return
-
-    # Unify Title Sequences
-    title_sequences = unify_title_sequences(directory_data, files_data)
-
-    # Grab IMDb IDs by parsing each title with Google.
-    imdb_ids = parse_imdb_ids(title_sequences)
-
-    # Resolve final imdb id if there are multiple and check its type.
-    final_id = resolve_ids(imdb_ids)
-    media_type = check_media_type(final_id)
-
-    # Parse ID Through OMDb
-    # Check if Movie or Series
-    # If Movie, Construct Final Filename
-    # If Seiries, Test if Beautifulsoup Can Extract Episode Names
-
-    print()
+            prompts.update_title(media_data)
+            prompts.update_year(media_data)
 
 
 if __name__ == "__main__":
@@ -111,7 +109,7 @@ if __name__ == "__main__":
 
     print('Media File Organizer')
     print('====================')
-    print('[Type "exit" or "quit" to end script...]')
+    print('[Type "exit" or "quit" to end script or press `Ctrl` + `C`.]')
 
     # Run Script
     while True:
