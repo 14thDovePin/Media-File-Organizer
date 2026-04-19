@@ -101,7 +101,8 @@ def main():
 
     # If multiple search results, prompt user to select.
     if int(search_results['totalResults']) > 1:
-        pass
+        choice = prompts.select_result(search_results, media_data['title'])
+        print(choice)
 
 
 if __name__ == "__main__":

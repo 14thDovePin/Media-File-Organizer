@@ -1,7 +1,28 @@
+from pick import pick
+
 from utils.data_sets import exit_list
 
 
 EXIT_LIST = exit_list()
+
+
+def select_result(search_result:dict, media_title) -> dict:
+    """Return the chosen search result by the user."""
+    # Construct title and choices.
+    title = f'Search Results From [{media_title}]'
+    titles = search_result['Search']
+    title_list = [f"[{i['imdbID']}] {i['Title']}" for i in titles]
+
+    # Prompt user to pick.
+    option, index = pick(title_list, title)
+
+    # Detail pick to user.
+    # Final Confirmation.
+
+    return titles[index]
+
+
+
 
 
 def update_title(media_data:dict):
