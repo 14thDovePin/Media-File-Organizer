@@ -1,6 +1,7 @@
 from pick import pick
 
 from utils.data_sets import exit_list
+from request_manager import detailed_omdb_search
 
 
 EXIT_LIST = exit_list()
@@ -8,21 +9,40 @@ EXIT_LIST = exit_list()
 
 def select_result(search_result:dict, media_title) -> dict:
     """Return the chosen search result by the user."""
-    # Construct title and choices.
-    title = f'Search Results From [{media_title}]'
-    titles = search_result['Search']
-    title_list = [f"[{i['imdbID']}] {i['Title']}" for i in titles]
+    while True:
 
-    # Prompt user to pick.
-    option, index = pick(title_list, title)
+        # Construct title and choices.
+        title = f'Search Results From [{media_title}]'
+        titles = search_result['Search']
+        title_list = [f"[{i['imdbID']}] {i['Title']}" for i in titles]
 
-    # Detail pick to user.
-    # Final Confirmation.
+        # Prompt user to pick.
+        option, index = pick(title_list, title)
+
+        # Detail pick to user for final confirmation.
+        response = detailed_omdb_search(titles[index]['imdbID'])
+
+        print("Selected Media Details...")
+        print("=========================")
+        print(f"Title --> {response['Title']}")
+        print(f"Year ---> {response['Year']}")
+        print(f"IMDd ID > {response['imdbID']}")
+        print(f"Type ---> {response['Type'].title()}")
+        print(f"Plot ---> {response['Plot']}")
+        print("=========================")
+        input("Press any key to continue...")
+
+        text = f"Confirm Media [{response['Title']} {response['Year']}]?"
+
+        # Final Confirmation.
+        _, final_confirmation_index = pick(['Confirm & Continue', 'Deny & Go Back'], text)
+
+        if final_confirmation_index == 1:
+            continue
+        else:
+            break
 
     return titles[index]
-
-
-
 
 
 def update_title(media_data:dict):
