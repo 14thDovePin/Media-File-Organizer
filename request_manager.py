@@ -12,6 +12,57 @@ API_KEY = os.getenv('omdb_api')
 OMDB_BASE_URL = 'https://www.omdbapi.com/?apikey='
 
 
+def detailed_omdb_search(
+        imdb_id: str,
+        title : str='',
+        year : int='',
+        plot : str='',
+        type : str=''
+        ) -> dict | None:
+    """Return a dictionary of search results based from given input.
+
+    Parameters
+    ----------
+    imdb_id: str
+        IMDb's official ID for the media.
+    search_title : str
+        The movie or show title to search for.
+    year : int
+        The year of the title.
+    plot : str
+        Print the plot in "short" or "full" versions. Defaults to short.
+    type : str
+        The type of the media to search for. "movie", "series" or "episode".
+
+    Returns
+    -------
+    dict
+        Title : str
+        Year : str
+        Season : str
+        Episode : str
+        Plot : str
+        imdbID : str
+        Type : str
+        Response : str
+    """
+    # Construct url.
+    url = OMDB_BASE_URL + API_KEY \
+        + "&i=" + imdb_id \
+        + "&t=" + title \
+        + "&y=" + str(year) \
+        + "&plot=" + plot \
+        + "&type=" + type \
+
+    # Process first request.
+    response = requests.get(url).json()
+
+    if 'Response' == 'False':
+        return None
+    else:
+        return response
+
+
 def search_omdb(
         search_title : str,
         year : int='',
@@ -37,9 +88,9 @@ def search_omdb(
     Returns
     -------
     dict
-        "Search" : [dict, dict, ...]
-        "totalResults" : str
-        "Response" : str
+        Search : [dict, dict, ...]
+        totalResults : str
+        Response : str
             "True" or "False"
     """
     # Construct url.
