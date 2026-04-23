@@ -88,11 +88,13 @@ def main():
 
         if search_results is None:
             # Update media details.
-            print('\nError! Movie Not Found...')
+            print('\nError! Media Not Found...')
             print('Current Title Details:')
             print(f'\tTitle > {media_data["title"]}')
             print(f'\tYear -> {media_data["year"]}')
-            print("Enter 'exit' or 'quit' to end script. Enter blank if either title or year doesn't need changes.")
+
+            print('\nPrompting user for the media\'s title and year...')
+            print("Enter 'exit' or 'quit' to end script. Enter blank if either title or year doesn't need changes.\n")
 
             prompts.update_title(media_data)
             prompts.update_year(media_data)
@@ -102,7 +104,14 @@ def main():
     # If multiple search results, prompt user to select.
     if int(search_results['totalResults']) > 1:
         choice = prompts.select_result(search_results, media_data['title'])
-        print(choice)
+    else:
+        choice = search_results['Search'][0]
+
+    # Final title confirmation.
+    confirm = prompts.final_confirmation(choice, ROOT_DIR)
+
+    if not confirm:
+        return
 
 
 if __name__ == "__main__":

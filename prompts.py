@@ -7,6 +7,28 @@ from request_manager import detailed_omdb_search
 EXIT_LIST = exit_list()
 
 
+def final_confirmation(searchResult:dict, dir:str) -> bool:
+    """Prompts user for media title final confirmation."""
+    print("\nMedia Details...")
+    print("================")
+    print(f"Title -----> {searchResult['Title']}")
+    print(f"IMDb ID ---> {searchResult['imdbID']}")
+    print(f"Directory -> {dir}")
+    print("================")
+
+    input("Press any key to continue...")
+
+    text = "Confirm Media to Rename"
+    choices = ['Confirm', 'Deny & Go Back']
+
+    _, index = pick(choices, text)
+
+    if index == 0:
+        return True
+    else:
+        return False
+
+
 def select_result(search_result:dict, media_title) -> dict:
     """Return the chosen search result by the user."""
     while True:
@@ -22,7 +44,7 @@ def select_result(search_result:dict, media_title) -> dict:
         # Detail pick to user for final confirmation.
         response = detailed_omdb_search(titles[index]['imdbID'])
 
-        print("Selected Media Details...")
+        print("\nSelected Media Details...")
         print("=========================")
         print(f"Title --> {response['Title']}")
         print(f"Year ---> {response['Year']}")
@@ -32,7 +54,7 @@ def select_result(search_result:dict, media_title) -> dict:
         print("=========================")
         input("Press any key to continue...")
 
-        text = f"Confirm Media [{response['Title']} {response['Year']}]?"
+        text = f"Confirm Selected Media [{response['Title']} {response['Year']}]?"
 
         # Final Confirmation.
         _, final_confirmation_index = pick(['Confirm & Continue', 'Deny & Go Back'], text)
