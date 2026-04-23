@@ -12,6 +12,19 @@ FE = file_extensions()
 VQ = video_qualities()
 
 
+def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
+    """Process a series type media directory."""
+    # Parse files.
+    parsed_files = [parse_filename(i) for i in filenames]
+
+    for i in parsed_files: print(f"S{i['season_number']}E{i['episode_number']}")
+
+    for file in parsed_files:
+        pass
+
+
+
+
 def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a movie type media directory."""
     files_information = []
@@ -107,15 +120,18 @@ def parse_filename(filename:str) -> dict:
     Returns
     -------
     dict
-        title : str
-        year : int
-        type : str
-            "movie" or "series"
-        imdb_id: str
-        season_number : int
-        episode_number : int
-        dir_name : str
-            The directory name given to this function.
+    - title : str
+    - year : int
+    - type : str
+        - "movie" or "series"
+    - imdb_id: str
+    - season_number : int
+    - episode_number : int
+    - file_extension : str
+    - file_name : str
+    - dir_name : str
+        - The directory name given to this function.
+
     """
     ignore_case = re.IGNORECASE
 

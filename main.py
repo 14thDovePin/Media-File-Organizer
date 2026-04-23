@@ -42,7 +42,8 @@ from data_processor import (
 from file_manager import (
     prompt_root_directory,
     parse_filename,
-    process_movie_media
+    process_movie_media,
+    process_series_media
 )
 from request_manager import search_omdb, detailed_omdb_search
 from utils.colors import Colors
@@ -130,7 +131,8 @@ def main():
     if media_info['Type'] == 'movie':
         process_movie_media(filenames, media_info, ROOT_DIR, path)
     elif media_info['Type'] == 'series':
-        pass
+        process_series_media(filenames, media_info, ROOT_DIR, path)
+
 
 
 if __name__ == "__main__":
