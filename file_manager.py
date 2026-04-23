@@ -5,11 +5,79 @@ import re
 from colorama import Fore
 
 from utils.colors import Colors
-from utils.data_sets import file_extensions, video_qualities
+from utils.data_sets import file_extensions, video_qualities, VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
 
 
 FE = file_extensions()
 VQ = video_qualities()
+
+
+def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
+    """Process a movie type media directory."""
+    files_information = []
+    media_file : dict = None
+    subtitle_file : dict = None
+
+    # Process directory files.
+    for file in filenames:
+        files_information.append(parse_filename(file))
+
+    # Scan media and subtitle files.
+    for file in files_information:
+        title_check = media_info['Title'].lower() in file['title'].lower()
+        media_extension_check = file['file_extension'] in VIDEO_EXTENSIONS
+        subtitle_extension_check = file['file_extension'] in SUBTITLE_EXTENSIONS
+
+        if title_check and media_extension_check:
+            media_file = file
+
+        if title_check and subtitle_extension_check:
+            subtitle_file = file
+
+        if media_file and subtitle_file:
+            break
+
+    # Construct base filename.
+    base_filename = f"{media_info['Title']} ({media_info['Year']})"
+
+    #
+    # Process Media File
+    #
+
+    # Precheck file existence.
+    media_file_path = os.path.join(root_dir, media_file['file_name'])
+
+    if not os.path.exists(media_file_path):
+        raise Exception("Media File Path Error!")
+
+    # Construct new name.
+    new_media_file_path = os.path.join(root_dir, base_filename +'.'+ media_file['file_extension'])
+
+    # Rename files.
+    os.rename(media_file_path, new_media_file_path)
+
+    #
+    # Process Subtitle File
+    #
+
+    if subtitle_file:
+        # Precheck file existence.
+        subtitle_file_path = os.path.join(root_dir, subtitle_file['file_name'])
+
+        if not os.path.exists(subtitle_file_path):
+            raise Exception("Subtitle File Path Error!")
+
+        # Construct new name.
+        new_subtitle_file_path = os.path.join(root_dir, base_filename +'.'+ subtitle_file['file_extension'])
+
+        # Rename files.
+        os.rename(subtitle_file_path, new_subtitle_file_path)
+
+    root_path = path.split('\\')
+    root_path = '\\'.join(root_path[:-1])
+    new_root_directory = os.path.join(root_path, base_filename)
+
+    os.rename(root_dir, new_root_directory)
 
 
 def prompt_root_directory() -> str:

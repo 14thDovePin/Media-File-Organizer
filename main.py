@@ -41,11 +41,12 @@ from data_processor import (
 )
 from file_manager import (
     prompt_root_directory,
-    parse_filename
+    parse_filename,
+    process_movie_media
 )
 from request_manager import search_omdb, detailed_omdb_search
 from utils.colors import Colors
-from utils.data_sets import VIDE_EXTENSIONS, SUBTITLE_EXTENSIONS
+from utils.data_sets import VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
 from utils.debug import print_debug
 from utils.templates import GenerateTemplate
 
@@ -127,71 +128,7 @@ def main():
 
     # Work on media type accordingly.
     if media_info['Type'] == 'movie':
-        files_information = []
-        media_file : dict = None
-        subtitle_file : dict = None
-
-        # Process directory files.
-        for file in filenames:
-            files_information.append(parse_filename(file))
-
-        # Scan through files.
-        for file in files_information:
-            title_check = media_info['Title'].lower() in file['title'].lower()
-            media_extension_check = file['file_extension'] in VIDE_EXTENSIONS
-            subtitle_extension_check = file['file_extension'] in SUBTITLE_EXTENSIONS
-
-            if title_check and media_extension_check:
-                media_file = file
-
-            if title_check and subtitle_extension_check:
-                subtitle_file = file
-
-            if media_file and subtitle_file:
-                break
-
-        # Construct base filename.
-        base_filename = f"{media_info['Title']} ({media_info['Year']})"
-
-        #
-        # Process Media File
-        #
-
-        # Precheck file existence.
-        media_file_path = os.path.join(ROOT_DIR, media_file['file_name'])
-
-        if not os.path.exists(media_file_path):
-            raise Exception("Media File Path Error!")
-
-        # Construct new name.
-        new_media_file_path = os.path.join(ROOT_DIR, base_filename +'.'+ media_file['file_extension'])
-
-        # Rename files.
-        os.rename(media_file_path, new_media_file_path)
-
-        #
-        # Process Subtitle File
-        #
-
-        if subtitle_file:
-            # Precheck file existence.
-            subtitle_file_path = os.path.join(ROOT_DIR, subtitle_file['file_name'])
-
-            if not os.path.exists(subtitle_file_path):
-                raise Exception("Subtitle File Path Error!")
-
-            # Construct new name.
-            new_subtitle_file_path = os.path.join(ROOT_DIR, base_filename +'.'+ subtitle_file['file_extension'])
-
-            # Rename files.
-            os.rename(subtitle_file_path, new_subtitle_file_path)
-
-        root_path = path.split('\\')
-        root_path = '\\'.join(root_path[:-1])
-        new_root_directory = os.path.join(root_path, base_filename)
-
-        os.rename(ROOT_DIR, new_root_directory)
-
+        process_movie_media(filenames, media_info, ROOT_DIR, path)
     elif media_info['Type'] == 'series':
         pass
 
