@@ -4,6 +4,7 @@ import re
 
 from colorama import Fore
 
+from request_manager import extract_series_ids, detailed_omdb_search
 from utils.colors import Colors
 from utils.data_sets import file_extensions, video_qualities, VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
 
@@ -17,12 +18,17 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
     # Parse files.
     parsed_files = [parse_filename(i) for i in filenames]
 
+    # Extract & parse IMDb IDs of each episode of the given season.
+    episode_ids = extract_series_ids(media_info['imdbID'])
+    parsed_episodes = [detailed_omdb_search(id) for id in episode_ids]
+
     for i in parsed_files: print(f"S{i['season_number']}E{i['episode_number']}")
+    print()
+    for i in parsed_episodes: print(f"S{i['Season']}E{i['Episode']}")
 
     for file in parsed_files:
         pass
 
-    # Scrape IMDb for season & episode IDs.
 
 
 

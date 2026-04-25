@@ -364,7 +364,7 @@ def check_media_type(imdb_id) -> bool:
     return metadata["Type"]
 
 
-if __name__ == "__main__":
-    # Simple testing only.
-    results = extract_series_ids("tt2741602")  # The Blacklist
-    results = extract_series_ids("tt0388629")  # One Piece
+# if __name__ == "__main__":
+#     # Simple testing only.
+#     results = extract_series_ids("tt2741602")  # The Blacklist
+#     results = extract_series_ids("tt0388629")  # One Piece

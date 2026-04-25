@@ -121,8 +121,6 @@ def main():
         choice['imdbID'],
     )
 
-    print(media_info)
-
     print(f"\nMedia Type is {media_info['Type'].title()}")
     print("Begin Processing Media Files...")
     print("===============================")
