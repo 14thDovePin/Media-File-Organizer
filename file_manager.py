@@ -22,6 +22,8 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
     for file in parsed_files:
         pass
 
+    # Scrape IMDb for season & episode IDs.
+
 
 
 
