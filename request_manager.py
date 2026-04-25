@@ -3,19 +3,17 @@ import os
 
 from time import sleep, time
 
+from dotenv import load_dotenv
 from selenium import webdriver
-# from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.support.wait import WebDriverWait
 
-from bs4 import BeautifulSoup
-from dotenv import load_dotenv
-
 
 # Global Setup
 load_dotenv()
+
 API_KEY = os.getenv('omdb_api')
 OMDB_BASE_URL = 'https://www.omdbapi.com/?apikey='
 
