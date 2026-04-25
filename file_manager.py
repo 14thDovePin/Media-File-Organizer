@@ -7,6 +7,7 @@ from colorama import Fore
 from request_manager import extract_series_ids, detailed_omdb_search
 from utils.colors import Colors
 from utils.data_sets import file_extensions, video_qualities, VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
+from utils import filter
 
 
 FE = file_extensions()
@@ -15,6 +16,8 @@ VQ = video_qualities()
 
 def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a series type media directory."""
+    print("Parsing files & episode list...")
+
     # Parse files.
     parsed_files = [parse_filename(i) for i in filenames]
 
@@ -22,12 +25,36 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
     episode_ids = extract_series_ids(media_info['imdbID'])
     parsed_episodes = [detailed_omdb_search(id) for id in episode_ids]
 
-    for i in parsed_files: print(f"S{i['season_number']}E{i['episode_number']}")
-    print()
-    for i in parsed_episodes: print(f"S{i['Season']}E{i['Episode']}")
-
+    # Work through each media file and rename them accrodingly.
     for file in parsed_files:
-        pass
+        for episode in parsed_episodes:
+            # Check if file is media related.
+            if file['season_number'] == None or file['episode_number'] == None:
+                continue
+
+            # Match file & episode.
+            season_check = int(file['season_number']) == int(episode['Season'])
+            episode_check = int(file['episode_number']) == int(episode['Episode'])
+
+            if season_check and episode_check:
+                # Setup and filter filenam.
+                episode_name = filter.windows_file_namescheme(episode['Title'])
+                filename = f"S{episode['Season']}E{episode['Episode']} - {episode_name}.{file['file_extension']}"
+                current_filename = os.path.join(root_dir, file['file_name'])
+                final_filename = os.path.join(root_dir, f'Season {episode["Season"]}', filename)
+
+                # Rename files and create directories.
+                dir_structure = '\\'.join(final_filename.split('\\')[:-1])
+
+                if not os.path.exists(dir_structure):
+                    os.makedirs(dir_structure)
+
+                os.rename(current_filename, final_filename)
+
+    # Rename directory.
+    final_name = os.path.join('\\'.join(root_dir.split('\\')[:-1]), media_info['Title'])
+    os.rename(root_dir, final_name)
+
 
 
 
