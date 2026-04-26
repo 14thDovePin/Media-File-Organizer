@@ -132,7 +132,6 @@ def main():
         process_series_media(filenames, media_info, ROOT_DIR, path)
 
 
-
 if __name__ == "__main__":
     # Setup terminal.
     commands = [

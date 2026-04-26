@@ -1,8 +1,8 @@
 '''
-Create a simulation directory containing media files by
-mirroring an actual directory full of it. Each file created
-is an empty file containing no data. Its purpose is to
-fullfill the testing needs of this project.
+Create a simulation directory containing test media files
+by mirroring an actual directory full of unprocessed media.
+Each file created is an empty file with no data, just the
+directory structure as well as filenames and its filetypes.
 '''
 
 import os
