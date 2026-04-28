@@ -55,7 +55,7 @@ def main():
 
     # Extract directory name, & filenames.
     walk = os.walk(ROOT_DIR)
-    path, directories, filenames = next(walk)
+    path, _, filenames = next(walk)
     DIR_NAME = path.split('\\').pop()
 
     print("\nFILE INFORMATION")
@@ -65,14 +65,14 @@ def main():
     print('Files Detected:')
     for i in filenames: print(' - '+i)
     print("================")
+
     input("Press Enter/Return to proceed...")
 
     print("Processing Media...")
 
-    # Initially parse the media title.
+    # Parse the media title for searching.
     media_data = parse_filename(DIR_NAME)
 
-    # Process Media IMDb Title
     while True:
 
         # Lookup title through OMDb search.
@@ -81,15 +81,13 @@ def main():
             media_data["year"]
         )
 
+        # Update media details if search results comes out empty.
         if search_results is None:
-            # Update media details.
             print('\nError! Media Not Found...')
             print('Current Title Details:')
             print(f' - Title > {media_data["title"]}')
             print(f' - Year -> {media_data["year"]}')
-
-            print('\nPrompting user for the media\'s title and year...')
-            # Update ↓
+            print('\nPrompting user for the media\'s proper title and year...')
             print("Enter 'exit' or 'quit' to end script.\n")
 
             prompts.update_title(media_data)

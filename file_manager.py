@@ -56,10 +56,6 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
     os.rename(root_dir, final_name)
 
 
-
-
-
-
 def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a movie type media directory."""
     files_information = []
