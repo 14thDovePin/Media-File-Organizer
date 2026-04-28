@@ -2,10 +2,7 @@ import json
 import os
 import re
 
-from colorama import Fore
-
 from request_manager import extract_series_ids, detailed_omdb_search
-from utils.colors import Colors
 from utils.data_sets import file_extensions, video_qualities, VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
 from utils import filter
 
@@ -300,15 +297,6 @@ def parse_filename(filename:str) -> dict:
     media_data["title"] = " ".join(word_sequence)
 
     return media_data
-
-
-def check_video(filename: str) -> bool:
-    """Check if filename is a video by its extension."""
-    for ext in FE:
-        if ext in filename:
-            return True
-
-    return False
 
 
 if __name__ == "__main__":
