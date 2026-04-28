@@ -1,3 +1,5 @@
+import os
+
 from pick import pick
 
 from utils.data_sets import exit_list
@@ -80,23 +82,6 @@ def final_confirmation(media_info:dict) -> bool:
         return False
 
 
-def update_title(media_data:dict):
-    """Update the title of a given media_data."""
-    while True:
-
-        new_title = input("Enter New Title: ")
-
-        # Exit if promted.
-        if new_title in EXIT_LIST:
-            exit()
-
-        if not new_title:
-            continue
-        else:
-            media_data['title'] = new_title
-            break
-
-
 def update_year(media_data:dict):
     """Update the year of a given media_data."""
     print('\nLeave blank if no changes are needed. Enter `none` if user wishes to remove the current year listed.\n')
@@ -123,3 +108,37 @@ def update_year(media_data:dict):
 
         media_data['year'] = new_year
         break
+
+
+def update_title(media_data:dict):
+    """Update the title of a given media_data."""
+    while True:
+
+        new_title = input("Enter New Title: ")
+
+        # Exit if promted.
+        if new_title in EXIT_LIST:
+            exit()
+
+        if not new_title:
+            continue
+        else:
+            media_data['title'] = new_title
+            break
+
+
+def root_directory() -> str:
+    """Prompt the root directory and return it as a string."""
+    while True:
+        media_directory = input("Enter Media Root Directory: ")
+
+        if media_directory.lower() in ['exit', 'quit']:
+            exit()
+
+        if not media_directory:
+            continue
+
+        if not os.path.exists(media_directory):
+            print("--- Invalid Directory! ---")
+        else:
+            return media_directory

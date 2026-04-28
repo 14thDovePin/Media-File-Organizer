@@ -9,5 +9,6 @@ def windows_file_namescheme(filename:str) -> str:
     filename = filename.replace('|', '')
     filename = filename.replace('?', '')
     filename = filename.replace('*', '')
+    filename = filename.replace('  ', ' ')
 
     return filename

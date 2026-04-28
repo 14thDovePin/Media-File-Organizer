@@ -49,7 +49,8 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
                 os.rename(current_filename, final_filename)
 
     # Rename directory.
-    final_name = os.path.join('\\'.join(root_dir.split('\\')[:-1]), media_info['Title'])
+    final_name = os.path.join('\\'.join(root_dir.split('\\')[:-1]), filter.windows_file_namescheme(media_info['Title']))
+
     os.rename(root_dir, final_name)
 
 
@@ -121,23 +122,6 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     new_root_directory = os.path.join(root_path, base_filename)
 
     os.rename(root_dir, new_root_directory)
-
-
-def prompt_root_directory() -> str:
-    """Prompt the root directory and return it as a string."""
-    while True:
-        media_directory = input("Enter Media Root Directory: ")
-
-        if media_directory.lower() in ['exit', 'quit']:
-            exit()
-
-        if not media_directory:
-            continue
-
-        if not os.path.exists(media_directory):
-            print("--- Invalid Directory! ---")
-        else:
-            return media_directory
 
 
 def parse_filename(filename:str) -> dict:

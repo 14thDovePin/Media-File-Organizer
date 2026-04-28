@@ -31,16 +31,8 @@ TODO List
 import os
 
 import prompts
-
-from file_manager import (
-    prompt_root_directory,
-    parse_filename,
-    process_movie_media,
-    process_series_media
-)
-from request_manager import search_omdb, detailed_omdb_search
-from utils.data_sets import VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
-from utils.debug import print_debug
+import file_manager
+import request_manager
 
 
 ROOT_DIR = str()
@@ -51,7 +43,7 @@ EXIT_LIST = ['exit', 'quit']
 
 def main():
     # Prompt the root directory of the media.
-    ROOT_DIR = prompt_root_directory()
+    ROOT_DIR = prompts.root_directory()
 
     # Extract directory name, & filenames.
     walk = os.walk(ROOT_DIR)
@@ -71,12 +63,12 @@ def main():
     print("Processing Media...")
 
     # Parse the media title for searching.
-    media_data = parse_filename(DIR_NAME)
+    media_data = file_manager.parse_filename(DIR_NAME)
 
     while True:
 
         # Lookup title through OMDb search.
-        search_results = search_omdb(
+        search_results = request_manager.search_omdb(
             media_data["title"],
             media_data["year"]
         )
@@ -103,7 +95,7 @@ def main():
         choice = search_results['Search'][0]
 
     # Grab detailed omdb media information.
-    media_info = detailed_omdb_search(
+    media_info = request_manager.detailed_omdb_search(
         choice['imdbID'],
     )
 
@@ -113,9 +105,9 @@ def main():
 
     # Work on media type accordingly.
     if media_info['Type'] == 'movie':
-        process_movie_media(filenames, media_info, ROOT_DIR, path)
+        file_manager.process_movie_media(filenames, media_info, ROOT_DIR, path)
     elif media_info['Type'] == 'series':
-        process_series_media(filenames, media_info, ROOT_DIR, path)
+        file_manager.process_series_media(filenames, media_info, ROOT_DIR, path)
 
 
 if __name__ == "__main__":
