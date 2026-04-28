@@ -32,13 +32,6 @@ import os
 
 import prompts
 
-from data_processor import (
-    parse_imdb_ids,
-    process_directory_data,
-    process_filenames_data,
-    resolve_ids,
-    unify_title_sequences
-)
 from file_manager import (
     prompt_root_directory,
     parse_filename,
@@ -46,13 +39,9 @@ from file_manager import (
     process_series_media
 )
 from request_manager import search_omdb, detailed_omdb_search
-from utils.colors import Colors
 from utils.data_sets import VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
 from utils.debug import print_debug
-from utils.templates import GenerateTemplate
 
-
-DEBUG = True
 
 ROOT_DIR = str()
 DIR_NAME = str()
@@ -69,13 +58,16 @@ def main():
     path, directories, filenames = next(walk)
     DIR_NAME = path.split('\\').pop()
 
-    if DEBUG:
-        print_debug()
-        print_debug("FILE INFORMATION")
-        print_debug(f'Path: {path}')
-        print_debug(f'Directory Name: {DIR_NAME}')
-        print_debug('Files:')
-        for i in filenames: print_debug('\t'+i)
+    print("\nFILE INFORMATION")
+    print("================")
+    print(f'Path: {path}')
+    print(f'Directory Name: {DIR_NAME}')
+    print('Files Detected:')
+    for i in filenames: print(' - '+i)
+    print("================")
+    input("Press Enter/Return to proceed...")
+
+    print("Processing Media...")
 
     # Initially parse the media title.
     media_data = parse_filename(DIR_NAME)
@@ -93,11 +85,12 @@ def main():
             # Update media details.
             print('\nError! Media Not Found...')
             print('Current Title Details:')
-            print(f'\tTitle > {media_data["title"]}')
-            print(f'\tYear -> {media_data["year"]}')
+            print(f' - Title > {media_data["title"]}')
+            print(f' - Year -> {media_data["year"]}')
 
             print('\nPrompting user for the media\'s title and year...')
-            print("Enter 'exit' or 'quit' to end script. Enter blank if either title or year doesn't need changes.\n")
+            # Update ↓
+            print("Enter 'exit' or 'quit' to end script.\n")
 
             prompts.update_title(media_data)
             prompts.update_year(media_data)
@@ -106,15 +99,10 @@ def main():
 
     # If multiple search results, prompt user to select.
     if int(search_results['totalResults']) > 1:
+        print("Multiple search results found! Prompting user for the correct one...")
         choice = prompts.select_result(search_results, media_data['title'])
     else:
         choice = search_results['Search'][0]
-
-    # Final title confirmation.
-    confirm = prompts.final_confirmation(choice, ROOT_DIR)
-
-    if not confirm:
-        return
 
     # Grab detailed omdb media information.
     media_info = detailed_omdb_search(

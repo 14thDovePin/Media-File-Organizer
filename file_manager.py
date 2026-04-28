@@ -88,6 +88,8 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     # Construct base filename.
     base_filename = f"{media_info['Title']} ({media_info['Year']})"
 
+    # TODO: Figure out media_file = None case where the media file isn't detected. Let user pick manually.
+
     #
     # Process Media File
     #
