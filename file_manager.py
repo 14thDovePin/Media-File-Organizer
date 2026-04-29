@@ -83,8 +83,6 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     # Construct base filename.
     base_filename = f"{media_info['Title']} ({media_info['Year']})"
 
-    # TODO: Figure out media_file = None case where the media file isn't detected. Let user pick manually.
-
     #
     # Process Media File
     #
@@ -99,6 +97,7 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     new_media_file_path = os.path.join(root_dir, base_filename +'.'+ media_file['file_extension'])
 
     # Rename files.
+    print("Processing Files & Directories...")
     os.rename(media_file_path, new_media_file_path)
 
     #
@@ -123,6 +122,8 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     new_root_directory = os.path.join(root_path, base_filename)
 
     os.rename(root_dir, new_root_directory)
+    print(f"Finished Processing Media [{media_info['Title']}]")
+    print(f'^^^^^^^^^^^^^^^^^^^^^^^^^')
 
 
 def parse_filename(filename:str) -> dict:

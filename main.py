@@ -54,8 +54,9 @@ def main():
     print("================")
     print(f'Path: {path}')
     print(f'Directory Name: {DIR_NAME}')
-    print('Files Detected:')
+    print('Files Detected :')
     for i in filenames: print(' - '+i)
+    print(f'[{len(filenames)}] Total Files Detected...')
     print("================")
 
     input("Press Enter/Return to proceed...")
