@@ -56,24 +56,25 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
 
 def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a movie type media directory."""
-    files_information = []
-    media_file : dict = None
-    subtitle_file : dict = None
-
     # Process directory files.
+    files_information = []
+
     for file in filenames:
         files_information.append(parse_filename(file))
 
-    # Scan media and subtitle files.
+    # Assume that only one movie file and an optional subtitle file is present.
+    media_file : dict = None
+    subtitle_file : dict = None
+
+    # Scan files.
     for file in files_information:
-        title_check = media_info['Title'].lower() in file['title'].lower()
         media_extension_check = file['file_extension'] in VIDEO_EXTENSIONS
         subtitle_extension_check = file['file_extension'] in SUBTITLE_EXTENSIONS
 
-        if title_check and media_extension_check:
+        if media_extension_check:
             media_file = file
 
-        if title_check and subtitle_extension_check:
+        if subtitle_extension_check:
             subtitle_file = file
 
         if media_file and subtitle_file:
