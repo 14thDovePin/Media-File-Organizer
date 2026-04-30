@@ -112,6 +112,8 @@ def update_year(media_data:dict):
 
 def update_title(media_data:dict):
     """Update the title of a given media_data."""
+    print('\nLeave blank if no changes are needed.\n')
+
     while True:
 
         new_title = input("Enter New Title: ")
@@ -121,7 +123,7 @@ def update_title(media_data:dict):
             exit()
 
         if not new_title:
-            continue
+            break
         else:
             media_data['title'] = new_title
             break

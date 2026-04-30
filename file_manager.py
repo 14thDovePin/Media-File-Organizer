@@ -9,10 +9,19 @@ from utils import filter
 
 FE = file_extensions()
 VQ = video_qualities()
+PROCESSED_DIRECTORY = '.Processed_Media'
 
 
 def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a series type media directory."""
+
+    # Create the destination directory.
+    processed_directory = os.path.join('\\'.join(root_dir.split('\\')[:-1]), PROCESSED_DIRECTORY)
+    destination_directory = os.path.join(processed_directory, filter.windows_file_namescheme(media_info['Title']))
+
+    if not os.path.exists(destination_directory):
+        os.makedirs(destination_directory)
+
     print("Parsing files & episode list...")
 
     # Parse files.
@@ -22,6 +31,12 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
     episode_ids = extract_series_ids(media_info['imdbID'])
     parsed_episodes = [detailed_omdb_search(id) for id in episode_ids]
 
+    # Check for any bad data within the parsed episodes.
+    for episode in parsed_episodes[:]:
+        if episode['Season'] == 'N/A' or episode['Episode'] == 'N/A':
+            print(f"### BAD DATA!!! ['{episode['imdbID']}']")
+            parsed_episodes.remove(episode)
+
     # Work through each media file and rename them accrodingly.
     for file in parsed_files:
         for episode in parsed_episodes:
@@ -30,16 +45,8 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
                 continue
 
             # Match file & episode.
-            omdb_results_season = 0
-            omdb_results_episode = 0
-
-            try:
-                omdb_results_season = int(episode['Season'])
-                omdb_results_episode = int(episode['Episode'])
-            except:
-                print(f"### BAD DATA!!! ['{episode['imdbID']}']")
-                print(f"###     Affected File: Season {file['season_number']}, Episode {file['episode_number']}")
-                continue
+            omdb_results_season = int(episode['Season'])
+            omdb_results_episode = int(episode['Episode'])
 
             season_check = int(file['season_number']) == int(episode['Season'])
             episode_check = int(file['episode_number']) == int(episode['Episode'])
@@ -49,9 +56,11 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
                 episode_name = filter.windows_file_namescheme(episode['Title'])
                 filename = f"S{episode['Season']}E{episode['Episode']} - {episode_name}.{file['file_extension']}"
                 current_filename = os.path.join(root_dir, file['file_name'])
-                final_filename = os.path.join(root_dir, f'Season {episode["Season"]}', filename)
+                final_filename = os.path.join(destination_directory, f'Season {episode["Season"]}', filename)
 
-                # Rename files and create directories.
+                print(f"Processing [{final_filename.split('\\')[-1]}]")
+
+                # Rename files and create the necessary directories.
                 dir_structure = '\\'.join(final_filename.split('\\')[:-1])
 
                 if not os.path.exists(dir_structure):
@@ -59,14 +68,27 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
 
                 os.rename(current_filename, final_filename)
 
-    # Rename directory.
-    final_name = os.path.join('\\'.join(root_dir.split('\\')[:-1]), filter.windows_file_namescheme(media_info['Title']))
+    # Cleanup root directory if its empty.
+    walk = os.walk(root_dir)
+    _, directories, files = next(walk)
 
-    os.rename(root_dir, final_name)
+    if len(directories) == 0 and len(files) == 0:
+        os.rmdir(root_dir)
+
+    print(f'↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓')
+    print(f"Finished Processing Series [{media_info['Title']}]")
+    print(f'↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑')
 
 
 def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
     """Process a movie type media directory."""
+    # Create processed directory.
+    base_filename = filter.windows_file_namescheme(f"{media_info['Title']} ({media_info['Year']})")
+    processed_directory = os.path.join('\\'.join(root_dir.split('\\')[:-1]), PROCESSED_DIRECTORY, base_filename)
+
+    if not os.path.exists(processed_directory):
+        os.makedirs(processed_directory)
+
     # Process directory files.
     files_information = []
 
@@ -91,27 +113,28 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
         if media_file and subtitle_file:
             break
 
-    # Construct base filename.
-    base_filename = filter.windows_file_namescheme(f"{media_info['Title']} ({media_info['Year']})")
-
     # Process media and subtitle files.
-    print("Processing Files & Directories...")
-    rename_file(root_dir, media_file, base_filename, media_file['file_extension'])
+    if media_file:
+        print(f"Processing [{base_filename+'.'+media_file['file_extension']}]")
+        rename_file(root_dir, processed_directory, media_file, base_filename, media_file['file_extension'])
 
     if subtitle_file:
-        rename_file(root_dir, subtitle_file, base_filename, subtitle_file['file_extension'])
+        print(f"Processing [{base_filename+'.'+subtitle_file['file_extension']}]")
+        rename_file(root_dir, processed_directory, subtitle_file, base_filename, subtitle_file['file_extension'])
 
-    # Rename root directory.
-    root_path = path.split('\\')
-    root_path = '\\'.join(root_path[:-1])
-    new_root_directory = os.path.join(root_path, base_filename)
+    # Cleanup root directory if its empty.
+    walk = os.walk(root_dir)
+    _, directories, files = next(walk)
 
-    os.rename(root_dir, new_root_directory)
-    print(f"Finished Processing Media [{media_info['Title']}]")
-    print(f'^^^^^^^^^^^^^^^^^^^^^^^^^')
+    if len(directories) == 0 and len(files) == 0:
+        os.rmdir(root_dir)
+
+    print(f'↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓')
+    print(f"Finished Processing Movie [{media_info['Title']}]")
+    print(f'↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑')
 
 
-def rename_file(root_dir, media_file, base_filename, file_extension):
+def rename_file(root_dir, processed_dir, media_file, base_filename, file_extension):
     """Rename a a file given its details and the file extension wanted."""
     # Precheck file existence.
     file_path = os.path.join(root_dir, media_file['file_name'])
@@ -120,7 +143,7 @@ def rename_file(root_dir, media_file, base_filename, file_extension):
         raise Exception("Media File Path Error!")
 
     # Construct new name.
-    new_file_path = os.path.join(root_dir, base_filename +'.'+ file_extension)
+    new_file_path = os.path.join(processed_dir, base_filename +'.'+ file_extension)
 
     # Rename files.
     os.rename(file_path, new_file_path)

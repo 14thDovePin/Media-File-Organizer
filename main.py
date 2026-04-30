@@ -26,6 +26,7 @@ as software development approach. Let's see how I handle this!
 
 TODO List
 - Integrate sqlite to cache omdb information.
+- Integrate scraping IMDb directly if 'N/A' has been detected.
 """
 
 import os
