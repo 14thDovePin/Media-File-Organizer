@@ -30,6 +30,17 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
                 continue
 
             # Match file & episode.
+            omdb_results_season = 0
+            omdb_results_episode = 0
+
+            try:
+                omdb_results_season = int(episode['Season'])
+                omdb_results_episode = int(episode['Episode'])
+            except:
+                print(f"### BAD DATA!!! ['{episode['imdbID']}']")
+                print(f"###     Affected File: Season {file['season_number']}, Episode {file['episode_number']}")
+                continue
+
             season_check = int(file['season_number']) == int(episode['Season'])
             episode_check = int(file['episode_number']) == int(episode['Episode'])
 
@@ -81,42 +92,16 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
             break
 
     # Construct base filename.
-    base_filename = f"{media_info['Title']} ({media_info['Year']})"
+    base_filename = filter.windows_file_namescheme(f"{media_info['Title']} ({media_info['Year']})")
 
-    #
-    # Process Media File
-    #
-
-    # Precheck file existence.
-    media_file_path = os.path.join(root_dir, media_file['file_name'])
-
-    if not os.path.exists(media_file_path):
-        raise Exception("Media File Path Error!")
-
-    # Construct new name.
-    new_media_file_path = os.path.join(root_dir, base_filename +'.'+ media_file['file_extension'])
-
-    # Rename files.
+    # Process media and subtitle files.
     print("Processing Files & Directories...")
-    os.rename(media_file_path, new_media_file_path)
-
-    #
-    # Process Subtitle File
-    #
+    rename_file(root_dir, media_file, base_filename, media_file['file_extension'])
 
     if subtitle_file:
-        # Precheck file existence.
-        subtitle_file_path = os.path.join(root_dir, subtitle_file['file_name'])
+        rename_file(root_dir, subtitle_file, base_filename, subtitle_file['file_extension'])
 
-        if not os.path.exists(subtitle_file_path):
-            raise Exception("Subtitle File Path Error!")
-
-        # Construct new name.
-        new_subtitle_file_path = os.path.join(root_dir, base_filename +'.'+ subtitle_file['file_extension'])
-
-        # Rename files.
-        os.rename(subtitle_file_path, new_subtitle_file_path)
-
+    # Rename root directory.
     root_path = path.split('\\')
     root_path = '\\'.join(root_path[:-1])
     new_root_directory = os.path.join(root_path, base_filename)
@@ -124,6 +109,21 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
     os.rename(root_dir, new_root_directory)
     print(f"Finished Processing Media [{media_info['Title']}]")
     print(f'^^^^^^^^^^^^^^^^^^^^^^^^^')
+
+
+def rename_file(root_dir, media_file, base_filename, file_extension):
+    """Rename a a file given its details and the file extension wanted."""
+    # Precheck file existence.
+    file_path = os.path.join(root_dir, media_file['file_name'])
+
+    if not os.path.exists(file_path):
+        raise Exception("Media File Path Error!")
+
+    # Construct new name.
+    new_file_path = os.path.join(root_dir, base_filename +'.'+ file_extension)
+
+    # Rename files.
+    os.rename(file_path, new_file_path)
 
 
 def parse_filename(filename:str) -> dict:

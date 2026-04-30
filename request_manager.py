@@ -29,7 +29,12 @@ def extract_series_ids(series_imdb_id:str, timeout:int=10) -> list:
         - # of seconds before scraping times out on a webpage.
     """
     # Get the total number of seasons the show has.
-    number_of_seasons = int(detailed_omdb_search(series_imdb_id)['totalSeasons'])
+    total_seasons = detailed_omdb_search(series_imdb_id)['totalSeasons']
+
+    if total_seasons == 'N/A':  # Temporary fix. Replace with IMDb webscraping.
+        number_of_seasons = int(input("Enter Total Number of Seasons: "))
+    else:
+        number_of_seasons = int(detailed_omdb_search(series_imdb_id)['totalSeasons'])
 
     # Grab all urls listing episodes per season.
     episode_list_pages = []

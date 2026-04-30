@@ -25,7 +25,7 @@ I really did over engineered this. With a fresh new mindset as well
 as software development approach. Let's see how I handle this!
 
 TODO List
-- Integrate Tests
+- Integrate sqlite to cache omdb information.
 """
 
 import os
