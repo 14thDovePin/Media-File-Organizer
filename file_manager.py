@@ -4,7 +4,7 @@ import re
 
 from request_manager import extract_series_ids, detailed_omdb_search
 from utils.data_sets import file_extensions, video_qualities, VIDEO_EXTENSIONS, SUBTITLE_EXTENSIONS
-from utils import filter
+from utils import filter, format
 
 
 FE = file_extensions()
@@ -52,13 +52,16 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
             episode_check = int(file['episode_number']) == int(episode['Episode'])
 
             if season_check and episode_check:
-                # Setup and filter filenam.
-                episode_name = filter.windows_file_namescheme(episode['Title'])
-                filename = f"S{episode['Season']}E{episode['Episode']} - {episode_name}.{file['file_extension']}"
-                current_filename = os.path.join(root_dir, file['file_name'])
-                final_filename = os.path.join(destination_directory, f'Season {episode["Season"]}', filename)
+                # Setup and filter filename.
+                sn = format.se_number(omdb_results_season)
+                en = format.se_number(omdb_results_episode)
 
-                print(f"Processing [{final_filename.split('\\')[-1]}]")
+                episode_name = filter.windows_file_namescheme(episode['Title'])
+                filename = f"S{sn}E{en} - {episode_name}.{file['file_extension']}"
+                current_filename = os.path.join(root_dir, file['file_name'])
+                final_filename = os.path.join(destination_directory, f'Season {sn}', filename)
+
+                print(f"Processing [{current_filename.split('\\')[-1]}]")
 
                 # Rename files and create the necessary directories.
                 dir_structure = '\\'.join(final_filename.split('\\')[:-1])
@@ -77,7 +80,7 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
 
     print(f'↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓')
     print(f"Finished Processing Series [{media_info['Title']}]")
-    print(f'↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑')
+    print(f'==========================')
 
 
 def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str) -> None:
@@ -115,11 +118,9 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
 
     # Process media and subtitle files.
     if media_file:
-        print(f"Processing [{base_filename+'.'+media_file['file_extension']}]")
         rename_file(root_dir, processed_directory, media_file, base_filename, media_file['file_extension'])
 
     if subtitle_file:
-        print(f"Processing [{base_filename+'.'+subtitle_file['file_extension']}]")
         rename_file(root_dir, processed_directory, subtitle_file, base_filename, subtitle_file['file_extension'])
 
     # Cleanup root directory if its empty.
@@ -131,7 +132,7 @@ def process_movie_media(filenames:list, media_info:dict, root_dir:str, path:str)
 
     print(f'↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓')
     print(f"Finished Processing Movie [{media_info['Title']}]")
-    print(f'↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑↑')
+    print(f'=========================')
 
 
 def rename_file(root_dir, processed_dir, media_file, base_filename, file_extension):
@@ -146,6 +147,7 @@ def rename_file(root_dir, processed_dir, media_file, base_filename, file_extensi
     new_file_path = os.path.join(processed_dir, base_filename +'.'+ file_extension)
 
     # Rename files.
+    print(f"Processing [{file_path.split('\\')[-1]}]")
     os.rename(file_path, new_file_path)
 
 

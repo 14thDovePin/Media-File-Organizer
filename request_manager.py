@@ -69,15 +69,13 @@ def extract_series_ids(series_imdb_id:str, timeout:int=10) -> list:
             EC.presence_of_element_located((By.XPATH, episode_list_panel_xpath))
         )
 
-        print("Page Loaded Successfully!")
-
         # Click see all button if present.
         see_all_button = None
 
         try:
             see_all_button = driver.find_element(By.XPATH, see_all_xpath)
         except:
-            print('Button "See All" not found.')
+            pass
 
         if see_all_button:
             driver.execute_script("arguments[0].click();", see_all_button)
@@ -89,7 +87,6 @@ def extract_series_ids(series_imdb_id:str, timeout:int=10) -> list:
             # Wait for episode list panel to finish updating.
             timeout_counter = 0
 
-            print("Loading episode lists...")
             start_time = time()  # Track time.
 
             while True:
@@ -107,10 +104,6 @@ def extract_series_ids(series_imdb_id:str, timeout:int=10) -> list:
 
             end_time = time()
             total_time = round(end_time - start_time, 2)
-
-            print(f"Time took to load all episodes... | {total_time}")
-
-        print("Extracting IMDb IDs...")
 
         # Extract & filter hrefs from tags.
         elements = driver.find_elements(By.CLASS_NAME, "ipc-title-link-wrapper")
