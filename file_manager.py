@@ -57,7 +57,8 @@ def process_series_media(filenames:list, media_info:dict, root_dir:str, path:str
                 en = format.se_number(omdb_results_episode)
 
                 episode_name = filter.windows_file_namescheme(episode['Title'])
-                filename = media_info['Title'] + f" S{sn}E{en} {episode_name}.{file['file_extension']}"
+                title = filter.windows_file_namescheme(media_info['Title'])
+                filename = title + f" S{sn}E{en} {episode_name}.{file['file_extension']}"
                 current_filename = os.path.join(root_dir, file['file_name'])
                 final_filename = os.path.join(destination_directory, f'Season {sn}', filename)
 
